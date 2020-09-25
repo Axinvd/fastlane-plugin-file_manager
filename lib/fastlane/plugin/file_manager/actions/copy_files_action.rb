@@ -3,8 +3,15 @@ require "fastlane/action"
 module Fastlane
   module Actions
     class CopyFilesAction < Action
+      if FastlaneCore::Helper.is_windows?
+        Actions.sh("chcp 65001")
+      end
       def self.run(params)
-        Actions.sh("cp", params[:source], params[:destination])
+        if FastlaneCore::Helper.is_windows?
+            Actions.sh("copy \"#{params[:source].gsub("/", "\\\\")}\" \"#{params[:destination]}\" /Y")
+        else
+            Actions.sh("cp", params[:source], params[:destination])
+        end
       end
 
       def self.description
